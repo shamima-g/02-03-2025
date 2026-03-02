@@ -4,14 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Template repository** for building frontend applications with:
+**Contact Form with Admin Inbox** - A reusable embedded contact form for site visitors with spam protection, and a password-gated admin inbox for the site owner to view submitted messages.
 
-- Next.js 16 (App Router) + React 19 + TypeScript 5 (strict)
-- Tailwind CSS 4 + Shadcn UI (via MCP server)
-- Vitest + React Testing Library
-- Production-ready API client for OpenAPI-defined REST endpoints
+**Tech Stack:** Next.js 16 + React 19 + TypeScript 5 + Tailwind CSS 4 + Shadcn UI
 
-Users clone this template and use Claude Code to generate features, components, and API integrations.
+**Backend API:** Defined in `generated-docs/specs/api-spec.yaml`. Connects to live REST API at `http://localhost:3001/api`.
+
+**Planned Epics:**
+1. Contact Form - Home page with embedded contact form, validation, spam protection (honeypot + reCAPTCHA v3), loading and success/error states
+2. Admin Inbox - Password-gated admin page fetching and displaying all submitted messages
 
 ## Repository Structure
 
