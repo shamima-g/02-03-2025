@@ -1,8 +1,24 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom/vitest';
 
+// Polyfills for Radix UI components (Select, Dialog, etc.) in JSDOM
+// Radix UI uses pointer capture APIs that JSDOM does not implement
+if (!Element.prototype.hasPointerCapture) {
+  Element.prototype.hasPointerCapture = () => false;
+}
+if (!Element.prototype.setPointerCapture) {
+  Element.prototype.setPointerCapture = () => {};
+}
+if (!Element.prototype.releasePointerCapture) {
+  Element.prototype.releasePointerCapture = () => {};
+}
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => {};
+}
+
 // Accessibility testing with axe-core
 import * as matchers from 'vitest-axe/matchers';
+import 'vitest-axe/extend-expect';
 import { expect } from 'vitest';
 
 expect.extend(matchers);

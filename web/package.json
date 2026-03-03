@@ -31,8 +31,10 @@
     "lucide-react": "^0.511.0",
     "next": "^16.0.7",
     "next-auth": "^5.0.0-beta.25",
+    "radix-ui": "^1.4.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "^7.56.4",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.25.23"
@@ -65,7 +67,7 @@
     "tw-animate-css": "^1.3.4",
     "typescript": "^5",
     "vitest": "^4.0.15",
-    "vitest-axe": "^0.1.0"
+    "vitest-axe": "^1.0.0-pre.5"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
