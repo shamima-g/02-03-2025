@@ -324,6 +324,13 @@ $allowPatterns = @(
     ($cdPrefix + 'git\s+stash\s+list(?:\s+.*)?$'),
     ($cdPrefix + 'git\s+describe(?:\s+.*)?$'),
     ($cdPrefix + 'git\s+tag(?:\s+(?:-l|--list)(?:\s+.*)?)?$'),
+    ($cdPrefix + 'git\s+merge-base(?:\s+.*)?$'),
+    # Write git commands (scoped to this project — matches settings.json allow list)
+    ($cdPrefix + 'git\s+add(?:\s+.*)?$'),
+    ($cdPrefix + 'git\s+commit(?:\s+.*)?$'),
+    ($cdPrefix + 'git\s+push(?:\s+.*)?$'),
+    ($cdPrefix + 'git\s+checkout(?:\s+.*)?$'),
+    ($cdPrefix + 'git\s+stash(?:\s+.*)?$'),
     ($cdPrefix + 'pwd\s*$'),
     ($cdPrefix + 'echo\s+\$[\w]+\s*$'),
 
