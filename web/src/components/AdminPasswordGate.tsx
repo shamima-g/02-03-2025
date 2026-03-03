@@ -4,14 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-function AdminInboxPlaceholder() {
-  return (
-    <section aria-label="Inbox">
-      <h2>Inbox</h2>
-    </section>
-  );
-}
+import { AdminInbox } from '@/components/AdminInbox';
 
 export function AdminPasswordGate() {
   const [password, setPassword] = useState('');
@@ -36,7 +29,7 @@ export function AdminPasswordGate() {
   }
 
   if (unlocked) {
-    return <AdminInboxPlaceholder />;
+    return <AdminInbox />;
   }
 
   return (
