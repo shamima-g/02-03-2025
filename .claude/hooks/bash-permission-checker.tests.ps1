@@ -315,6 +315,64 @@ Test-Command -Command 'cd web && docker run ubuntu && npm test' `
 # The deny patterns still protect against dangerous commands in this position.
 
 # =============================================================================
+# FIND - safe directory exploration
+# =============================================================================
+Write-Host "`nFind commands" -ForegroundColor Cyan
+
+Test-Command -Command 'find .claude -name "*.json" 2>/dev/null' `
+    -Expected 'allow' -Description 'find .claude json files'
+
+Test-Command -Command 'find documentation -name "*.yaml" -type f' `
+    -Expected 'allow' -Description 'find documentation yaml files'
+
+Test-Command -Command 'find web/src -name "*.tsx" -maxdepth 3' `
+    -Expected 'allow' -Description 'find web/src tsx files with maxdepth'
+
+Test-Command -Command 'find generated-docs -name "*.md"' `
+    -Expected 'allow' -Description 'find generated-docs markdown files'
+
+Test-Command -Command 'find .github -type f' `
+    -Expected 'allow' -Description 'find .github all files'
+
+Test-Command -Command 'cd /c/Git/project && find .claude -name "*.json" 2>/dev/null' `
+    -Expected 'allow' -Description 'cd + find .claude (compound)'
+
+Test-Command -Command 'cd /c/Git/00-Stadium-8-test-repos/taniawelsford-stadium-8-test-run-15 && find .claude -name "*.json" 2>/dev/null && ls .claude/' `
+    -Expected 'allow' -Description 'cd + find .claude + ls .claude (workflow state check)'
+
+Test-Command -Command 'find /home/user -name "*.json"' `
+    -Expected 'fallthrough' -Description 'find in unsafe directory = fallthrough'
+
+Test-Command -Command 'find .claude -name "*.json" -exec rm {} \;' `
+    -Expected 'fallthrough' -Description 'find with -exec = fallthrough'
+
+Test-Command -Command 'find .claude -delete' `
+    -Expected 'fallthrough' -Description 'find with -delete = fallthrough'
+
+# =============================================================================
+# WORKFLOW SCRIPTS - copy-with-header.js and other .claude/scripts/
+# =============================================================================
+Write-Host "`nWorkflow scripts" -ForegroundColor Cyan
+
+Test-Command -Command 'node .claude/scripts/copy-with-header.js --from "documentation/Api Definition.yaml" --to "generated-docs/specs/api-spec.yaml"' `
+    -Expected 'allow' -Description 'copy-with-header: basic with spaces in filename'
+
+Test-Command -Command 'node .claude/scripts/copy-with-header.js --from "documentation/design-tokens.css" --to "generated-docs/specs/design-tokens.css" --header "/* Source: documentation/design-tokens.css */"' `
+    -Expected 'allow' -Description 'copy-with-header: with custom --header flag'
+
+Test-Command -Command 'node .claude/scripts/copy-with-header.js --help' `
+    -Expected 'allow' -Description 'copy-with-header: --help'
+
+Test-Command -Command 'cd "c:/Git/project" && node .claude/scripts/copy-with-header.js --from "documentation/api.yaml" --to "generated-docs/specs/api-spec.yaml"' `
+    -Expected 'allow' -Description 'copy-with-header: with cd prefix'
+
+Test-Command -Command 'node .claude/scripts/transition-phase.js --show' `
+    -Expected 'allow' -Description 'transition-phase: --show'
+
+Test-Command -Command 'node .claude/scripts/generate-todo-list.js' `
+    -Expected 'allow' -Description 'generate-todo-list: no args'
+
+# =============================================================================
 # SPLITTER UNIT TESTS
 # =============================================================================
 Write-Host "`nSplitter unit tests" -ForegroundColor Cyan

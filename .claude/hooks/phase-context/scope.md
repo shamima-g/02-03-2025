@@ -11,7 +11,7 @@
 7. **Commit and push**:
    ```bash
    git add generated-docs/stories/_feature-overview.md CLAUDE.md .claude/logs/
-   git commit -m "SCOPE: Define epics for [Feature Name]"
+   git commit -m "docs(scope): define epics for [feature-name]"
    git push origin main
    node .claude/scripts/transition-phase.js --set-total-epics N
    node .claude/scripts/transition-phase.js --epic 1 --to STORIES --verify-output

@@ -12,7 +12,7 @@
    - Commit:
      ```bash
      git add generated-docs/
-     git commit -m "REALIGN: Update Story M based on implementation learnings"
+     git commit -m "docs(realign): update story M based on implementation learnings"
      ```
 4. **Transition to WRITE-TESTS**:
    ```bash

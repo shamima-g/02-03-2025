@@ -146,7 +146,11 @@ DESIGN is a multi-agent phase. See the DESIGN artifact-to-agent mapping in [orch
 
 2. **Check which artifacts with `generate == true` are still missing.** Use the artifact-to-agent mapping table in [orchestrator-rules.md § DESIGN Artifact-to-Agent Mapping](../shared/orchestrator-rules.md#design-artifact-to-agent-mapping) to determine output paths and which agent handles each artifact. Check whether the expected output file exists on disk — any missing file means that agent still needs to run.
 
-3. **For user-provided files that need copying** (`generate == false` + `userProvided` set): copy to `generated-docs/specs/` with a `# Source: <original-path>` header before invoking agents. See the shared rules mapping for the copy-vs-generate decision logic.
+3. **For user-provided files that need copying** (`generate == false` + `userProvided` set): use the copy script to copy to `generated-docs/specs/` with a source header before invoking agents:
+   ```bash
+   node .claude/scripts/copy-with-header.js --from "<userProvided-path>" --to "generated-docs/specs/<target-filename>"
+   ```
+   See the shared rules mapping for the copy-vs-generate decision logic.
 
 4. **Resume with the first missing artifact's agent** (in order: API → Style → Wireframe), using the scoped-call patterns in the shared rules. Then continue with subsequent agents.
 

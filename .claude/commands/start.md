@@ -110,7 +110,7 @@ Store the routing result: `onboardingPath = "docs"`. Set `projectDescription = n
 
 If the user chose "I have a prototype repo to import":
 
-1. Ask for the path as a **plain-text prompt**:
+1. Ask for the path as a **plain-text prompt** — output the question as regular text, do NOT use `AskUserQuestion` (see [shared rules § Open-ended prompt exception](../shared/orchestrator-rules.md#user-questions-mandatory)):
    > "What's the path to your prototype repo? You can use an absolute path (`C:\Git\my-prototype`) or a relative path (`../my-prototype`)."
 
 2. Run the import script:
@@ -210,11 +210,15 @@ Launch `intake-agent` with prompt:
 >
 > Produce the intake manifest and write it to generated-docs/context/intake-manifest.json. Include the project description in `context.projectDescription` (set to `null` if N/A). Return a human-readable summary. Do NOT commit. Do NOT use AskUserQuestion."
 
-**Orchestrator — Manifest Approval:**
+**Orchestrator — Manifest Approval (two-step — display THEN ask):**
 
-Display the manifest summary, then use `AskUserQuestion`:
-- "Does this look right? Anything to add or change before we move on?"
-- Options: "Looks good" / "I have changes"
+1. **Output the manifest summary as regular conversation text** so the user can read it before being asked to approve. Use the human-readable summary the agent returned. Structure it clearly — project description, what's already provided (with file names and details), and what DESIGN will generate.
+
+2. **Then** call `AskUserQuestion`:
+   - "Does this look right? Anything to add or change before we move on?"
+   - Options: "Looks good" / "I have changes"
+
+> **Do NOT skip step 1.** The user cannot approve what they haven't seen. The summary must appear as regular text output above the `AskUserQuestion` prompt — never embed it inside the question text, and never call `AskUserQuestion` without displaying the summary first.
 
 If "Looks good": proceed directly to **Step 4b** (no Call C needed).
 
@@ -260,11 +264,15 @@ Launch `intake-brd-review-agent` with prompt:
 >
 > Write the Feature Requirements Specification to generated-docs/specs/feature-requirements.md with source traceability. Amend the manifest if new artifact needs were discovered. Return a summary (requirement count, business rule count, key sections). Do NOT commit. Do NOT use AskUserQuestion."
 
-**Orchestrator — FRS Approval:**
+**Orchestrator — FRS Approval (two-step — display THEN ask):**
 
-Display FRS summary and file path. Use `AskUserQuestion`:
-- "Does this capture everything we need to build?"
-- Options: "Looks complete" / "I have changes"
+1. **Output the FRS summary as regular conversation text** — requirement count, business rule count, key sections covered, and the file path (`generated-docs/specs/feature-requirements.md`).
+
+2. **Then** call `AskUserQuestion`:
+   - "Does this capture everything we need to build?"
+   - Options: "Looks complete" / "I have changes"
+
+> Same rule as manifest approval: never call `AskUserQuestion` without displaying the summary first.
 
 If "I have changes": collect feedback.
 

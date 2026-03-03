@@ -11,7 +11,7 @@
 5. **Commit and push**:
    ```bash
    git add generated-docs/stories/epic-N-*/ .claude/logs/
-   git commit -m "STORIES: Add stories for Epic N: [Name]"
+   git commit -m "docs(stories): add stories for epic N — [name]"
    node .claude/scripts/transition-phase.js --set-total-stories M --epic N
    node .claude/scripts/transition-phase.js --epic N --story 1 --to REALIGN --verify-output
    git push origin main

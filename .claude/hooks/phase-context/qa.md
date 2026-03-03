@@ -11,7 +11,7 @@
 4. **Part 4 — Commit and push**:
    ```bash
    git add web/src/__tests__/ web/src/ .claude/logs/
-   git commit -m "story: Epic N, Story M: [Title]"
+   git commit -m "feat(epic-N): story M — [title]"
    git push origin main
    ```
 5. **Transition to COMPLETE**:

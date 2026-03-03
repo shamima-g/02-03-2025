@@ -34,7 +34,11 @@
 
 ### Orchestrator copy logic
 
-When an artifact has `generate == false` but `userProvided != null`, the orchestrator copies the user-provided file to `generated-docs/specs/` with a `# Source: <original-path>` header. No agent is invoked for that artifact.
+When an artifact has `generate == false` but `userProvided != null`, the orchestrator copies the user-provided file using the copy script:
+```bash
+node .claude/scripts/copy-with-header.js --from "<userProvided-path>" --to "generated-docs/specs/<target-filename>"
+```
+No agent is invoked for that artifact.
 
 ## Determining Current Stage After Compaction
 

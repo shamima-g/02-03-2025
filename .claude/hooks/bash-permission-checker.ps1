@@ -283,7 +283,7 @@ $allowPatterns = @(
 
     # --- File reading (safe directories only) ---
     ($cdPrefix + 'sed\s+-n\s+.+\s+' + $winPath + '(documentation|web|\.claude|\.github|generated-docs)[/\\]' + $subPath + '+["'']?\s*$'),
-    ($cdPrefix + 'cat\s+' + $winPath + '(documentation|web|generated-docs|\.claude|\.github)[/\\]' + $subPath + '+["'']?\s*$'),
+    ($cdPrefix + 'cat\s+' + $winPath + '(documentation|web|generated-docs|\.claude|\.github)[/\\]' + $subPath + '+["'']?(?:\s+2>/dev/null)?\s*$'),
     # Node modules type definitions (read-only, allows fallback with || and pipe to head)
     ($cdPrefix + 'cat\s+node_modules/[\w@./-]+\.d\.ts(?:\s+2>/dev/null)?(?:\s+\|\|\s+cat\s+node_modules/[\w@.*/-]+\.d\.ts)?(?:\s+\|\s+head\s+-?\d+)?\s*$'),
     ($cdPrefix + 'type\s+' + $winPath + '(documentation|web|generated-docs|\.claude|\.github)[/\\]' + $subPath + '+["'']?\s*$'),
@@ -294,6 +294,9 @@ $allowPatterns = @(
     ($cdPrefix + 'cat\s*>\s*' + $winPath + '(\.claude[/\\]context|generated-docs)[/\\]' + $subPath + '+["'']?\s*$'),
     # Heredoc writes to safe directories (cat > file << 'EOF' - no $ anchor because heredoc body follows)
     ($cdPrefix + 'cat\s*>\s*' + $winPath + '(\.claude[/\\]context|generated-docs)[/\\]' + $subPath + '+["'']?\s*<<\s*-?\s*[''"]?\w+[''"]?'),
+
+    # --- Find (safe directories only, read-only flags: no -exec, -delete) ---
+    ($cdPrefix + 'find\s+["'']?(?:[\w./:~\\-]*[/\\])?(\.claude|documentation|web|generated-docs|\.github)[/\\]?[\w./\\-]*["'']?(?:\s+(?:-(?:name|iname|type|maxdepth|mindepth|path)\s+["'']?[\w.*?/\\:-]+["'']?|-(?:empty|print0?)|!|-not))*(?:\s+2>/dev/null)?\s*$'),
 
     # --- Directory listing (allows globs like *.ts and 2>&1 redirect) ---
     ($cdPrefix + 'ls(?:\s+-[\w]+)*(?:\s+["'']?[\w./:~\\*?-]+["'']?)*(?:\s+2>&1)?\s*$'),
@@ -324,13 +327,6 @@ $allowPatterns = @(
     ($cdPrefix + 'git\s+stash\s+list(?:\s+.*)?$'),
     ($cdPrefix + 'git\s+describe(?:\s+.*)?$'),
     ($cdPrefix + 'git\s+tag(?:\s+(?:-l|--list)(?:\s+.*)?)?$'),
-    ($cdPrefix + 'git\s+merge-base(?:\s+.*)?$'),
-    # Write git commands (scoped to this project — matches settings.json allow list)
-    ($cdPrefix + 'git\s+add(?:\s+.*)?$'),
-    ($cdPrefix + 'git\s+commit(?:\s+.*)?$'),
-    ($cdPrefix + 'git\s+push(?:\s+.*)?$'),
-    ($cdPrefix + 'git\s+checkout(?:\s+.*)?$'),
-    ($cdPrefix + 'git\s+stash(?:\s+.*)?$'),
     ($cdPrefix + 'pwd\s*$'),
     ($cdPrefix + 'echo\s+\$[\w]+\s*$'),
 
