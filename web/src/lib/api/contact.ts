@@ -7,7 +7,7 @@ import type {
 
 export const submitContactMessage = (
   data: SubmitContactMessageRequest,
-): Promise<ContactMessage> => post<ContactMessage>('/contact-messages', data);
+): Promise<ContactMessage> => post<ContactMessage>('/api/messages', data);
 
 export const listContactMessages = (): Promise<ContactMessageListResponse> =>
-  get<ContactMessageListResponse>('/contact-messages');
+  get<ContactMessageListResponse>('/api/messages');
