@@ -11,7 +11,7 @@
  * Default: http://localhost:8042 (adjust as needed)
  */
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8042';
+  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api';
 
 /**
  * Default pagination settings
