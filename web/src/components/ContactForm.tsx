@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,9 +69,17 @@ export function ContactForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const alertRef = useRef<HTMLDivElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  useEffect(() => {
+    if (submitted) {
+      successRef.current?.focus();
+    }
+  }, [submitted]);
 
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const newValue = e.target.value;
@@ -119,16 +128,21 @@ export function ContactForm() {
     }
   }
 
+  function handleSendAnother() {
+    setSubmitted(false);
+    setName('');
+    setEmail('');
+    setSubject('');
+    setMessage('');
+    setErrors({});
+    setApiError(null);
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     // Clear previous API error on new submission attempt
     setApiError(null);
-
-    // Skip if honeypot is filled
-    if (honeypot) {
-      return;
-    }
 
     // Run validation — all fields simultaneously in one state update
     const validationErrors = validateForm(name, email, subject, message);
@@ -140,6 +154,14 @@ export function ContactForm() {
     // Clear any previous field errors
     setErrors({});
     setIsSubmitting(true);
+
+    // Honeypot check — simulate success without calling the API
+    if (honeypot) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setIsSubmitting(false);
+      setSubmitted(true);
+      return;
+    }
 
     try {
       const recaptchaToken = executeRecaptcha
@@ -154,11 +176,8 @@ export function ContactForm() {
         recaptchaToken,
       });
 
-      // Success — reset form
-      setName('');
-      setEmail('');
-      setSubject('');
-      setMessage('');
+      // Success — show confirmation region
+      setSubmitted(true);
     } catch {
       setApiError(
         'Something went wrong. Please try again or contact us directly.',
@@ -174,6 +193,32 @@ export function ContactForm() {
 
   const isAtLimit = message.length >= MESSAGE_MAX;
   const isButtonDisabled = isSubmitting || isAtLimit;
+
+  // Success confirmation region
+  if (submitted) {
+    return (
+      <div className="w-full max-w-lg mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Contact Me</h1>
+        <div
+          ref={successRef}
+          tabIndex={-1}
+          className="flex flex-col items-center gap-4 py-8 text-center outline-none"
+        >
+          <CheckCircle2
+            className="h-16 w-16 text-green-500"
+            aria-hidden="true"
+          />
+          <h2 className="text-2xl font-semibold">Message Sent!</h2>
+          <p className="text-muted-foreground">
+            Thanks for reaching out. I&apos;ll get back to you soon.
+          </p>
+          <Button variant="outline" onClick={handleSendAnother}>
+            Send another message
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-lg mx-auto">
