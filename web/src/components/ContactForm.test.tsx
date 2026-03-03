@@ -22,7 +22,7 @@
  * updated to include validation and API submission logic.
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
@@ -373,10 +373,11 @@ describe('Epic 1 Story 2 — Validation, Character Counter, and Error States', (
       expect(screen.getByText('42 / 1000')).toBeInTheDocument();
     });
 
-    it('shows "999 / 1000" in normal (non-error) styling at 999 characters', async () => {
-      const { user } = setup();
-      const nineNineNineChars = 'a'.repeat(999);
-      await user.type(screen.getByLabelText(/^message$/i), nineNineNineChars);
+    it('shows "999 / 1000" in normal (non-error) styling at 999 characters', () => {
+      setup();
+      fireEvent.change(screen.getByLabelText(/^message$/i), {
+        target: { value: 'a'.repeat(999) },
+      });
 
       const counter = screen.getByText('999 / 1000');
       expect(counter).toBeInTheDocument();
@@ -385,10 +386,11 @@ describe('Epic 1 Story 2 — Validation, Character Counter, and Error States', (
       expect(counter).not.toHaveClass('text-red-500');
     });
 
-    it('shows "1000 / 1000" with error styling when the textarea reaches the 1000-character limit', async () => {
-      const { user } = setup();
-      const thousandChars = 'a'.repeat(1000);
-      await user.type(screen.getByLabelText(/^message$/i), thousandChars);
+    it('shows "1000 / 1000" with error styling when the textarea reaches the 1000-character limit', () => {
+      setup();
+      fireEvent.change(screen.getByLabelText(/^message$/i), {
+        target: { value: 'a'.repeat(1000) },
+      });
 
       const counter = screen.getByText('1000 / 1000');
       expect(counter).toBeInTheDocument();
@@ -399,20 +401,22 @@ describe('Epic 1 Story 2 — Validation, Character Counter, and Error States', (
       expect(hasErrorStyling).toBe(true);
     });
 
-    it('disables the Send Message button when the Message textarea contains 1000 characters', async () => {
-      const { user } = setup();
-      const thousandChars = 'a'.repeat(1000);
-      await user.type(screen.getByLabelText(/^message$/i), thousandChars);
+    it('disables the Send Message button when the Message textarea contains 1000 characters', () => {
+      setup();
+      fireEvent.change(screen.getByLabelText(/^message$/i), {
+        target: { value: 'a'.repeat(1000) },
+      });
 
       expect(
         screen.getByRole('button', { name: /send message/i }),
       ).toBeDisabled();
     });
 
-    it('does not disable the Send Message button at 999 characters', async () => {
-      const { user } = setup();
-      const nineNineNineChars = 'a'.repeat(999);
-      await user.type(screen.getByLabelText(/^message$/i), nineNineNineChars);
+    it('does not disable the Send Message button at 999 characters', () => {
+      setup();
+      fireEvent.change(screen.getByLabelText(/^message$/i), {
+        target: { value: 'a'.repeat(999) },
+      });
 
       expect(
         screen.getByRole('button', { name: /send message/i }),
