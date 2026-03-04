@@ -11,7 +11,8 @@ export function AdminPasswordGate() {
   const [error, setError] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
 
-  function handleSubmit() {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
     const expected = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
     if (password === expected) {
       setError(null);
@@ -22,18 +23,12 @@ export function AdminPasswordGate() {
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    }
-  }
-
   if (unlocked) {
     return <AdminInbox />;
   }
 
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <h1>Admin Inbox</h1>
 
       <div>
@@ -43,7 +38,6 @@ export function AdminPasswordGate() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={handleKeyDown}
           aria-describedby={error ? 'password-error' : undefined}
           aria-invalid={error ? true : undefined}
         />
@@ -54,9 +48,7 @@ export function AdminPasswordGate() {
         )}
       </div>
 
-      <Button type="button" onClick={handleSubmit}>
-        Unlock
-      </Button>
-    </div>
+      <Button type="submit">Unlock</Button>
+    </form>
   );
 }

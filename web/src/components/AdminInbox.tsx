@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { listContactMessages } from '@/lib/api/contact';
@@ -53,38 +53,39 @@ export function AdminInbox() {
   const [status, setStatus] = useState<FetchStatus>('loading');
   const [messages, setMessages] = useState<ContactMessage[]>([]);
 
-  const handleRetry = useCallback(() => {
-    setStatus('loading');
+  const fetchMessages = useCallback((isCancelled: () => boolean) => {
     listContactMessages()
       .then((response) => {
-        setMessages(response.messages);
-        setStatus('success');
-      })
-      .catch(() => {
-        setStatus('error');
-      });
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    listContactMessages()
-      .then((response) => {
-        if (!cancelled) {
+        if (!isCancelled()) {
           setMessages(response.messages);
           setStatus('success');
         }
       })
       .catch(() => {
-        if (!cancelled) {
+        if (!isCancelled()) {
           setStatus('error');
         }
       });
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    let cancelled = false;
+    setStatus('loading');
+    fetchMessages(() => cancelled);
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [fetchMessages]);
 
-  const yearGroups = groupByYear(messages);
+  useEffect(() => {
+    let cancelled = false;
+    fetchMessages(() => cancelled);
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchMessages]);
+
+  const yearGroups = useMemo(() => groupByYear(messages), [messages]);
 
   return (
     <section aria-label="Inbox">

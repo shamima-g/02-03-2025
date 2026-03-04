@@ -222,7 +222,11 @@ describe('POST /api/messages — successful submission', () => {
   });
 
   it('creates a new file containing only the new message when no file exists', async () => {
-    mockExistsSync.mockReturnValue(false);
+    mockReadFileSync.mockImplementation(() => {
+      throw Object.assign(new Error('ENOENT: no such file or directory'), {
+        code: 'ENOENT',
+      });
+    });
 
     const request = buildPostRequest({
       name: 'Alice',

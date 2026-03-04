@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import type {
   ContactMessage,
@@ -16,9 +16,6 @@ const DATA_FILE = path.join(
 );
 
 function readData(): ContactMessageListResponse {
-  if (!existsSync(DATA_FILE)) {
-    return { messages: [], total: 0 };
-  }
   try {
     return JSON.parse(
       readFileSync(DATA_FILE, 'utf-8'),
